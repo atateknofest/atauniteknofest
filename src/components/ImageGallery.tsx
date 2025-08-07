@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 const ImageGallery = () => {
@@ -63,6 +63,17 @@ const ImageGallery = () => {
       setSelectedImage(selectedImage === 0 ? galleryImages.length - 1 : selectedImage - 1);
     }
   };
+
+  // Auto-advance images every 10 seconds when modal is open
+  useEffect(() => {
+    if (selectedImage === null) return;
+
+    const interval = setInterval(() => {
+      nextImage();
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(interval);
+  }, [selectedImage]);
 
   return (
     <section id="gallery" className="py-20 relative">
