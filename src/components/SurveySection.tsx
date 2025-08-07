@@ -1,0 +1,227 @@
+import { useState } from "react";
+import { Star, Send, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const SurveySection = () => {
+  const { toast } = useToast();
+  const [surveyData, setSurveyData] = useState({
+    satisfaction: 0,
+    interests: [] as string[],
+    improvement: "",
+    recommendation: 0,
+    comments: ""
+  });
+
+  const interestOptions = [
+    "Roket Teknolojileri",
+    "Uydu Sistemleri", 
+    "Drone Teknolojileri",
+    "Yapay Zeka",
+    "Elektronik Tasarım",
+    "Yazılım Geliştirme",
+    "Makine Tasarımı",
+    "Veri Analizi"
+  ];
+
+  const handleRatingChange = (field: string, rating: number) => {
+    setSurveyData(prev => ({
+      ...prev,
+      [field]: rating
+    }));
+  };
+
+  const handleInterestToggle = (interest: string) => {
+    setSurveyData(prev => ({
+      ...prev,
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter(i => i !== interest)
+        : [...prev.interests, interest]
+    }));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setSurveyData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (surveyData.satisfaction === 0) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Lütfen memnuniyet puanınızı verin.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // In a real app, this would be sent to a backend
+    console.log("Survey data:", surveyData);
+    
+    toast({
+      title: "Anket Gönderildi!",
+      description: "Görüşleriniz için teşekkür ederiz. Yanıtlarınız değerlendirilecektir.",
+    });
+
+    // Reset form
+    setSurveyData({
+      satisfaction: 0,
+      interests: [],
+      improvement: "",
+      recommendation: 0,
+      comments: ""
+    });
+  };
+
+  const StarRating = ({ rating, onRatingChange, label }: { rating: number, onRatingChange: (rating: number) => void, label: string }) => (
+    <div>
+      <label className="text-sm font-medium text-foreground mb-2 block">
+        {label}
+      </label>
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => onRatingChange(star)}
+            className="transition-colors"
+          >
+            <Star
+              className={`w-8 h-8 ${
+                star <= rating
+                  ? 'text-yellow-400 fill-yellow-400'
+                  : 'text-gray-400 hover:text-yellow-400'
+              }`}
+            />
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-muted-foreground mt-1">
+        {rating === 0 ? 'Puanlama yapın' : 
+         rating === 1 ? 'Çok Kötü' :
+         rating === 2 ? 'Kötü' :
+         rating === 3 ? 'Orta' :
+         rating === 4 ? 'İyi' : 'Mükemmel'}
+      </p>
+    </div>
+  );
+
+  return (
+    <section id="survey" className="py-20 relative">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6 glowing-text">
+            Anket
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Görüşleriniz bizim için çok değerli. Klübümüzü nasıl geliştirebileceğimiz konusunda fikirlerinizi paylaşın
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="space-card p-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Satisfaction Rating */}
+              <div>
+                <StarRating
+                  rating={surveyData.satisfaction}
+                  onRatingChange={(rating) => handleRatingChange('satisfaction', rating)}
+                  label="Teknofest klübümüzden ne kadar memnunsunuz? *"
+                />
+              </div>
+
+              {/* Interest Areas */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-4 block">
+                  Hangi teknoloji alanlarıyla ilgileniyorsunuz? (Birden fazla seçebilirsiniz)
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {interestOptions.map((interest) => (
+                    <button
+                      key={interest}
+                      type="button"
+                      onClick={() => handleInterestToggle(interest)}
+                      className={`p-3 rounded-lg border transition-all text-sm ${
+                        surveyData.interests.includes(interest)
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-background border-border hover:border-primary'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center space-x-2">
+                        {surveyData.interests.includes(interest) && (
+                          <CheckCircle className="w-4 h-4" />
+                        )}
+                        <span>{interest}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Improvement Suggestions */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Klübümüzü geliştirmek için önerileriniz nelerdir?
+                </label>
+                <textarea
+                  name="improvement"
+                  value={surveyData.improvement}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-vertical"
+                  placeholder="Önerilerinizi, eleştirilerinizi ve isteklerinizi buraya yazabilirsiniz..."
+                />
+              </div>
+
+              {/* Recommendation Rating */}
+              <div>
+                <StarRating
+                  rating={surveyData.recommendation}
+                  onRatingChange={(rating) => handleRatingChange('recommendation', rating)}
+                  label="Klübümüzü arkadaşlarınıza ne kadar tavsiye edersiniz?"
+                />
+              </div>
+
+              {/* Additional Comments */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Eklemek istediğiniz başka bir şey var mı?
+                </label>
+                <textarea
+                  name="comments"
+                  value={surveyData.comments}
+                  onChange={handleInputChange}
+                  rows={3}
+                  className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-vertical"
+                  placeholder="Diğer görüş ve önerileriniz..."
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="text-center">
+                <button
+                  type="submit"
+                  className="cosmic-button inline-flex items-center"
+                >
+                  <Send className="w-5 h-5 mr-2" />
+                  Anketi Gönder
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Survey Info */}
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p>Anket tamamen gizlidir ve verileriniz sadece klübümüzü geliştirmek için kullanılacaktır.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SurveySection;
