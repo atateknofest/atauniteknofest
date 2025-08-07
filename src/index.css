@@ -77,7 +77,6 @@ All colors MUST be HSL.
     --ring: 15 100% 60%;
   }
 }
-}
 
 @layer base {
   * {
