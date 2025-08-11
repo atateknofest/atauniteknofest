@@ -5,6 +5,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
+    { name: "Hakkında", href: "#about" },
     { name: "Ekip Başvuru", href: "#team-application" },
     { name: "Son Etkinlik", href: "#latest-event" },
     { name: "İletişim", href: "#contact" },
@@ -29,8 +30,7 @@ const Header = () => {
               <span className="text-white font-bold text-lg">T</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">TEKNOFEST</h1>
-              <p className="text-sm text-muted-foreground">Atatürk Üniversitesi</p>
+              <h1 className="text-xl font-bold text-foreground">Atatürk Üniversitesi Teknofest Kulübü</h1>
             </div>
           </div>
 

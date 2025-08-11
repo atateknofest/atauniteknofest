@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { Star, Send, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const SurveySection = () => {
   const { toast } = useToast();
   const [surveyData, setSurveyData] = useState({
+    department: "",
+    departmentOther: "",
+    grade: "",
+    gradeOther: "",
     satisfaction: 0,
     interests: [] as string[],
+    interestOther: "",
     improvement: "",
     recommendation: 0,
     comments: ""
@@ -20,7 +26,29 @@ const SurveySection = () => {
     "Elektronik Tasarım",
     "Yazılım Geliştirme",
     "Makine Tasarımı",
-    "Veri Analizi"
+    "Veri Analizi",
+    "Diğer",
+  ];
+
+  const departments = [
+    "Bilgisayar Mühendisliği",
+    "Elektrik-Elektronik Mühendisliği",
+    "Makine Mühendisliği",
+    "Endüstri Mühendisliği",
+    "Fizik",
+    "Matematik",
+    "Diğer",
+  ];
+
+  const grades = [
+    "Hazırlık",
+    "1. Sınıf",
+    "2. Sınıf",
+    "3. Sınıf",
+    "4. Sınıf",
+    "Yüksek Lisans",
+    "Doktora",
+    "Diğer",
   ];
 
   const handleRatingChange = (field: string, rating: number) => {
@@ -39,7 +67,7 @@ const SurveySection = () => {
     }));
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSurveyData(prev => ({
       ...prev,
@@ -47,7 +75,7 @@ const SurveySection = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (surveyData.satisfaction === 0) {
@@ -59,8 +87,29 @@ const SurveySection = () => {
       return;
     }
 
-    // In a real app, this would be sent to a backend
-    console.log("Survey data:", surveyData);
+    const payload = {
+      department: surveyData.department === "Diğer" ? surveyData.departmentOther : surveyData.department,
+      grade: surveyData.grade === "Diğer" ? surveyData.gradeOther : surveyData.grade,
+      interests: surveyData.interests,
+      interest_other: surveyData.interests.includes("Diğer") ? surveyData.interestOther : null,
+      satisfaction: surveyData.satisfaction,
+      improvement: surveyData.improvement,
+      recommendation: surveyData.recommendation,
+      comments: surveyData.comments,
+    };
+
+    const { error } = await supabase
+      .from("survey_responses")
+      .insert(payload);
+
+    if (error) {
+      toast({
+        title: "Hata",
+        description: "Anket gönderilirken bir sorun oluştu.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     toast({
       title: "Anket Gönderildi!",
@@ -69,8 +118,13 @@ const SurveySection = () => {
 
     // Reset form
     setSurveyData({
+      department: "",
+      departmentOther: "",
+      grade: "",
+      gradeOther: "",
       satisfaction: 0,
       interests: [],
+      interestOther: "",
       improvement: "",
       recommendation: 0,
       comments: ""
@@ -134,6 +188,61 @@ const SurveySection = () => {
                 />
               </div>
 
+              {/* Department / Grade */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-4 block">
+                  Bölümünüz / Sınıfınız
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <select
+                    name="department"
+                    value={surveyData.department}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  >
+                    <option value="">Bölümünüzü seçin</option>
+                    {departments.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                  <select
+                    name="grade"
+                    value={surveyData.grade}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  >
+                    <option value="">Sınıfınızı seçin</option>
+                    {grades.map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </div>
+                {(surveyData.department === 'Diğer' || surveyData.grade === 'Diğer') && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                    {surveyData.department === 'Diğer' && (
+                      <input
+                        type="text"
+                        name="departmentOther"
+                        value={surveyData.departmentOther}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Bölümünüzü belirtin"
+                      />
+                    )}
+                    {surveyData.grade === 'Diğer' && (
+                      <input
+                        type="text"
+                        name="gradeOther"
+                        value={surveyData.gradeOther}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                        placeholder="Sınıfınızı belirtin"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Interest Areas */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-4 block">
@@ -160,6 +269,16 @@ const SurveySection = () => {
                     </button>
                   ))}
                 </div>
+                {surveyData.interests.includes('Diğer') && (
+                  <input
+                    type="text"
+                    name="interestOther"
+                    value={surveyData.interestOther}
+                    onChange={handleInputChange}
+                    className="w-full mt-3 px-4 py-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="Diğer teknoloji alanlarını belirtin"
+                  />
+                )}
               </div>
 
               {/* Improvement Suggestions */}

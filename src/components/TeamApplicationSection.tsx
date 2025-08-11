@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Send, User, Mail, Phone, GraduationCap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const TeamApplicationSection = () => {
   const { toast } = useToast();
@@ -34,7 +35,7 @@ const TeamApplicationSection = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -47,8 +48,17 @@ const TeamApplicationSection = () => {
       return;
     }
 
-    // In a real app, this would be sent to a backend
-    console.log("Form data:", formData);
+    const payload = { ...formData };
+    const { error } = await supabase.from("team_applications").insert(payload);
+
+    if (error) {
+      toast({
+        title: "Hata",
+        description: "Başvurunuz gönderilirken bir sorun oluştu.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     toast({
       title: "Başvuru Gönderildi!",

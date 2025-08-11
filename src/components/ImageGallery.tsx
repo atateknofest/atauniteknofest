@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const ImageGallery = () => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -87,7 +88,43 @@ const ImageGallery = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Mobile Carousel */}
+        <div className="md:hidden">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {galleryImages.map((image, index) => (
+                <CarouselItem key={image.id} className="basis-full">
+                  <div
+                    className="space-card group cursor-pointer overflow-hidden"
+                    onClick={() => openModal(index)}
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={image.url}
+                        alt={image.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
+                        {image.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {image.description}
+                      </p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+
+        {/* Desktop Grid */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
@@ -99,6 +136,7 @@ const ImageGallery = () => {
                   src={image.url}
                   alt={image.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  loading="lazy"
                 />
               </div>
               <div className="p-4">

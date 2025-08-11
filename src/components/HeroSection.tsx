@@ -10,11 +10,8 @@ const HeroSection = () => {
         <div className="text-center lg:text-left space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl lg:text-7xl font-bold glowing-text">
-              TEKNOFEST
+              Atatürk Üniversitesi Teknofest Kulübü
             </h1>
-            <h2 className="text-2xl lg:text-3xl text-primary font-semibold">
-              Atatürk Üniversitesi
-            </h2>
             <p className="text-xl text-muted-foreground max-w-2xl">
               Uzay teknolojileri alanında eğitim ve araştırma yapan öğrencilerimize 
               teorik bilgiyi pratiğe dönüştürme fırsatı sunuyoruz.

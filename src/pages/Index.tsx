@@ -7,6 +7,7 @@ import LatestEventSection from "@/components/LatestEventSection";
 import ContactSection from "@/components/ContactSection";
 import SurveySection from "@/components/SurveySection";
 import Footer from "@/components/Footer";
+import AboutSection from "@/components/AboutSection";
 
 const Index = () => {
   return (
@@ -14,10 +15,11 @@ const Index = () => {
       <Header />
       <main className="relative z-10">
         <HeroSection />
+        <AboutSection />
+        <LatestEventSection />
         <ImageGallery />
         <AnnouncementsSection />
         <TeamApplicationSection />
-        <LatestEventSection />
         <ContactSection />
         <SurveySection />
       </main>
