@@ -14,7 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      survey_responses: {
+        Row: {
+          comments: string | null
+          created_at: string
+          department: string | null
+          grade: string | null
+          id: string
+          improvement: string | null
+          interest_other: string | null
+          interests: string[] | null
+          recommendation: number | null
+          satisfaction: number
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string
+          department?: string | null
+          grade?: string | null
+          id?: string
+          improvement?: string | null
+          interest_other?: string | null
+          interests?: string[] | null
+          recommendation?: number | null
+          satisfaction: number
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string
+          department?: string | null
+          grade?: string | null
+          id?: string
+          improvement?: string | null
+          interest_other?: string | null
+          interests?: string[] | null
+          recommendation?: number | null
+          satisfaction?: number
+        }
+        Relationships: []
+      }
+      team_applications: {
+        Row: {
+          created_at: string
+          department: string
+          email: string
+          experience: string | null
+          grade: string | null
+          id: string
+          motivation: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          email: string
+          experience?: string | null
+          grade?: string | null
+          id?: string
+          motivation: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          email?: string
+          experience?: string | null
+          grade?: string | null
+          id?: string
+          motivation?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
