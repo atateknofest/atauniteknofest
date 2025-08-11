@@ -156,24 +156,6 @@ const ContactSection = () => {
               </div>
             </div>
 
-            <div className="space-card p-8">
-              <h3 className="text-xl font-bold text-foreground mb-4">
-                Toplantı Saatleri
-              </h3>
-              <div className="space-y-3 text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Perşembe</span>
-                  <span className="font-medium">14:00 - 16:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Cumartesi</span>
-                  <span className="font-medium">10:00 - 12:00</span>
-                </div>
-                <p className="text-sm text-primary mt-4">
-                  * Toplantılara katılmak için önceden iletişim kurmanız önerilir.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
